@@ -1,0 +1,23 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/finance-manager/node_modules
+/finance-manager/.pnp
+/finance-manager/.pnp.js
+
+# testing
+/finance-manager/coverage
+
+# production
+/finance-manager/build
+
+# misc
+/finance-manager/.DS_Store
+/finance-manager/.env.local
+/finance-manager/.env.development.local
+/finance-manager/.env.test.local
+/finance-manager/.env.production.local
+
+/finance-manager/npm-debug.log*
+/finance-manager/yarn-debug.log*
+/finance-manager/yarn-error.log*
