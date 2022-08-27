@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, render_template
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
@@ -6,13 +6,22 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import InputRequired, Length, ValidationError
 import api as api
+from models import db, User
 
 # App Setup
 app = Flask(__name__)
-db = SQLAlchemy(app)
+
+# Config
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SECRET_KEY'] = 'secretKeyGoesHere'
 
+# Initialize
+db.init_app(app)
+
+with app.app_context():
+    db.create_all()
+
+# Prevent CORS errors
 CORS(app)
 
 # Database tables
