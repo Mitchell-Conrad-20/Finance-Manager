@@ -1,15 +1,13 @@
+import json
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-from flask_sqlalchemy import SQLAlchemy
-from flask_login import UserMixin
-from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
-from wtforms.validators import InputRequired, Length, ValidationError
+from flask_bcrypt import Bcrypt
 import api as api
 from models import db, User
 
 # App Setup
 app = Flask(__name__)
+bcrypt = Bcrypt(app)
 
 # Config
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
@@ -17,50 +15,55 @@ app.config['SECRET_KEY'] = 'secretKeyGoesHere'
 
 # Initialize
 db.init_app(app)
-
 with app.app_context():
     db.create_all()
 
 # Prevent CORS errors
 CORS(app)
 
-# Database tables
-class User(db.Model, UserMixin):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(20), nullable=False, unique=True)
-    password = db.Column(db.String(80), nullable=False)
+# Register POST 
+@app.route("/register", methods=['POST'])
+def register():
+    email = request.json["email"]
+    password = request.json["password"]
 
-# User Registration
-class RegisterForm():
-    username = StringField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Username"})
-    password = PasswordField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Password"})
+    userExists = User.query.filter_by(email=email).first() is not None
 
-    submit = SubmitField("Register")
+    if userExists:
+        return jsonify({"Error": "User Already Exists"}), 409
 
-    def validate_username(self, username):
-        existing_user_username = User.query.filter_by(username = username.data).first()
-        
-        if existing_user_username:
-            raise ValidationError("Username")
+    hash = bcyrpt.generate_password_hash(password)
+    user = User(email = email, password = hash)
+    db.session.add(user)
+    db.session.commit()
 
-# User Login
-class LoginForm():
-    username = StringField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Username"})
-    password = PasswordField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Password"})
+    return jsonify({
+        "id": user.id,
+        "email": user.email
+    })
 
-    submit = SubmitField("Login")
-
-# Login POST 
-@app.route("/login", methods=['POST'])
+# Login POST
+@app.route("/login", methods=["POST"])
 def login():
-    form = LoginForm()
+    email = request.json["email"]
+    password = request.json["password"]
+    
+    user = User.query.filter_by(email=email).first()
 
+    if user is None:
+        return jsonify({"Error": "User not found"})
+
+    userIsValid = bcrypt.check_password_hash(user.password, password)
+
+    if not userIsValid:
+        return jsonify({"Error": "Invalid password"})
+
+    #still need to return the session cookie thingy
 
 # GET Request Routes
 @app.route("/bankData")
 def bankData():
     return jsonify(api.getCsv())
-
 
 # Run App
 if (__name__ == "__main__"):
