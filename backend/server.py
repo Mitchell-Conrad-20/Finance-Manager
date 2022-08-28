@@ -30,6 +30,9 @@ server_session = Session(app)
 # Prevent CORS errors
 CORS(app)
 
+# ROUTES
+# TODO: Add Routes to Routes File
+
 # Get current user
 @app.route("/getCurrentUser", methods=['GET'])
 def getCurrentUser():
@@ -41,7 +44,7 @@ def getCurrentUser():
     user = User.query.filter_by(id = userId).first()
 
     if not user:
-        return jsonify({"Error": "No current user"})
+        return jsonify({"Error": "No user exists with the user id provided by session"})
 
     return jsonify({
         "id": user.id,
