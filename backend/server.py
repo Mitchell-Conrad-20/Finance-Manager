@@ -51,6 +51,12 @@ def getCurrentUser():
         "email": user.email
     })
 
+# Logout POST
+@app.route("/logout", methods=['POST'])
+def logout():
+    session.pop("user_id")
+    return jsonify({"Success": "User logged out"}), 200
+
 # Register POST 
 @app.route("/register", methods=['POST'])
 def register():
