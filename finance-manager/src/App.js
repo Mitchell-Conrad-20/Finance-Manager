@@ -6,15 +6,24 @@ import Nav from './components/Nav/Nav';
 function App() {
   return (
     <>
-      <div className='contentPadding'>
-        <BrowserRouter>
-          <Nav/>
+      {/* Everything need to be inside of the BrowserRouter to function properly */}
+      <BrowserRouter>
+
+        {/* Navbar is outside of padding */}
+        <Nav />
+
+        {/* Everything else gets default padding */}
+        <div className='contentPadding'>
+
+          {/* Define routes */}
           <Routes>
-            <Route path='/' index element={<Home/>}/>
-            <Route path='/dashboard' element={<Dashboard/>}/>
+            <Route path='/' index element={<Home />} />
+            <Route path='/dashboard' element={<Dashboard />} />
           </Routes>
-        </BrowserRouter>
-      </div>
+          
+        </div>
+      </BrowserRouter>
+
 
     </>
   );

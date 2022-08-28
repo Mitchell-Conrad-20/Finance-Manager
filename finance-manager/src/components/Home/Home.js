@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import './Home.css'
 import Login from '../Login/Login'
-import httpClient from '../../httpClient'
 import Button from '../Button/Button'
+import { logout, getCurrentUser } from '../../backendInterface'
 
 const Home = () => {
 
@@ -12,16 +12,14 @@ const Home = () => {
     email: null
   })
 
-  // Get the current user, return if user is already set
+  // Get the current user
   useEffect(() => {
     async function fetchData() {
-      await httpClient.post("//localhost:5000/getCurrentUser")
-        .then(resp => resp.data)
-        .then(data => {
-          console.log(data)
+      await getCurrentUser()
+        .then(userResp => {
           setUser({
-            id: data.id,
-            email: data.email
+            id: userResp.id,
+            email: userResp.email
           })
         })
     }
@@ -29,16 +27,17 @@ const Home = () => {
     fetchData();
   }, [])
 
-  // Log the user out
-  const logout = async () => {
-    await httpClient.post("//localhost:5000/logout")
-      .then(resp => resp.data)
-      .then(data => {
-        console.log(data)
+  // Handle the logout
+  const handleLogout = async () => {
+    await logout()
+      .then(() => {
         setUser({
           id: null,
           email: null
         })
+      })
+      .catch(err => {
+        console.log(err)
       })
   }
 
@@ -53,7 +52,7 @@ const Home = () => {
 
       {/* Show the logout button if there is an active session */}
       {user.id &&
-        <Button onClick={logout}>Logout</Button>
+        <Button onClick={handleLogout}>Logout</Button>
       }
 
     </div>
