@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import httpClient from '../../httpClient'
 import './Login.css'
 
 const Login = () => {
@@ -16,25 +17,17 @@ const Login = () => {
 
   // Login Post
   const login = async () => {
-    const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        email: input.email,
-        password: input.password
+    await httpClient.post('//localhost:5000/login', {
+      email: input.email,
+      password: input.password
+    })
+      .then(resp => resp.data)
+      .then(data => {
+        console.log(data)
       })
-    }
-
-    try {
-      await fetch('http://127.0.0.1:5000/login', requestOptions)
-        .then(response => response.json())
-        .then(data => {
-          console.log(data)
-        })
-    }
-    catch (error) {
-      console.log(error);
-    }
+      .catch(err => {
+        console.log(err)
+      })
   }
 
   return (

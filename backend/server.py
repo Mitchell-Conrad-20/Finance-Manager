@@ -28,18 +28,18 @@ with app.app_context():
 server_session = Session(app)
 
 # Prevent CORS errors
-CORS(app)
+CORS(app, supports_credentials = True)
 
 # ROUTES
 # TODO: Add Routes to Routes File
 
 # Get current user
-@app.route("/getCurrentUser", methods=['GET'])
+@app.route("/getCurrentUser", methods=['POST'])
 def getCurrentUser():
     userId = session.get("user_id")
     
     if not userId:
-        return jsonify({"Error": "No current user"})
+        return jsonify({"Error": "No current user", "userId": userId})
 
     user = User.query.filter_by(id = userId).first()
 
@@ -55,7 +55,7 @@ def getCurrentUser():
 @app.route("/logout", methods=['POST'])
 def logout():
     session.pop("user_id")
-    return jsonify({"Success": "User logged out"}), 200
+    return jsonify({"Success": "User logged out"}), "200"
 
 # Register POST 
 @app.route("/register", methods=['POST'])
