@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import './Home.css'
 import Login from '../Login/Login'
 import httpClient from '../../httpClient'
+import Button from '../Button/Button'
 
 const Home = () => {
 
@@ -11,14 +12,9 @@ const Home = () => {
     email: null
   })
 
-  // Get the current user (if one exists)
+  // Get the current user, return if user is already set
   useEffect(() => {
-
-    if (user.id) {
-      return
-    }
-
-    async function fetchData(){
+    async function fetchData() {
       await httpClient.post("//localhost:5000/getCurrentUser")
         .then(resp => resp.data)
         .then(data => {
@@ -31,19 +27,19 @@ const Home = () => {
     }
 
     fetchData();
-  }, [user])
+  }, [])
 
   // Log the user out
   const logout = async () => {
     await httpClient.post("//localhost:5000/logout")
-        .then(resp => resp.data)
-        .then(data => {
-          console.log(data)
-          setUser({
-            id: null,
-            email: null
-          })
+      .then(resp => resp.data)
+      .then(data => {
+        console.log(data)
+        setUser({
+          id: null,
+          email: null
         })
+      })
   }
 
   return (
@@ -57,7 +53,7 @@ const Home = () => {
 
       {/* Show the logout button if there is an active session */}
       {user.id &&
-        <button onClick={logout}>Logout</button>
+        <Button onClick={logout}>Logout</Button>
       }
 
     </div>

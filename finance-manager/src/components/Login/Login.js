@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
-import httpClient from '../../httpClient'
 import './Login.css'
+import httpClient from '../../httpClient'
+import Button from '../Button/Button'
+import Input from '../Input/Input'
 
 const Login = () => {
 
@@ -34,11 +36,11 @@ const Login = () => {
     <>
       <h3>Login</h3>
 
-      <input placeholder="Email" name="email" onChange={handleChange} type="text" />
+      <Input placeholder="Email" name="email" onChange={handleChange} type="text" />
       <br /><br />
-      <input placeholder="Password" name="password" onChange={handleChange} type="password" />
+      <Input placeholder="Password" name="password" onChange={handleChange} type="password" />
       <br /><br />
-      <button onClick={login}>Login</button>
+      <Button onClick={login}>Login</Button>
 
     </>
   )
